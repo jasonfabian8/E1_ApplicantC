@@ -22,7 +22,7 @@ namespace ApplicantC.Data
         public string Title { get; set; }
 
         [Required]
-        public DateOnly CreatedDate { get; set; }
+        public DateTime CreatedDate { get; set; }
 
         public int Rating { get; set; }
         

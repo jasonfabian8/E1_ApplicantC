@@ -78,7 +78,7 @@ relacionadas
                            Id = m.Id,
                            Image = m.Image,
                            Title = m.Title,
-                           //CreatedDate = m.CreatedDate, OJO
+                           CreatedDate = m.CreatedDate,
                            Rating = m.Rating
                        };
             cd.Movies = list.ToArray();
@@ -89,19 +89,20 @@ relacionadas
         public IActionResult Post(Models.CharacterDetail character)
         {
             ChallengeContext db = new ChallengeContext();
-            Data.Character c = new Data.Character {
+            Data.Character c = new Data.Character
+            {
                 Name = character.Name,
                 Image = character.Image,
                 Age = character.Age,
                 Weight = character.Weight,
                 Story = character.Story
             };
-            if (character.Movies!=null)
-            foreach (Models.Movie m in character.Movies)
-            {
-                Data.Movie mo = db.Movies.Find(m.Id);
-                if (mo != null) c.Movies.Add(mo);
-            }
+            if (character.Movies != null)
+                foreach (Models.Movie m in character.Movies)
+                {
+                    Data.Movie mo = db.Movies.Find(m.Id);
+                    if (mo != null) c.Movies.Add(mo);
+                }
             db.Characters.Add(c);
             db.SaveChanges();
             return Ok();
@@ -119,6 +120,13 @@ relacionadas
                 c.Age = character.Age;
                 c.Weight = character.Weight;
                 c.Story = character.Story;
+                c.Movies.Clear();
+                if (character.Movies != null)
+                    foreach (Models.Movie m in character.Movies)
+                    {
+                        Data.Movie mo = db.Movies.Find(m.Id);
+                        if (mo != null) c.Movies.Add(mo);
+                    }
                 db.SaveChanges();
                 return Ok();
             }
