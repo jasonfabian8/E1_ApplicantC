@@ -396,5 +396,3 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
-/ApplicantC/Controllers/WeatherForecastController.cs
-/ApplicantC/Models/WeatherForecast.cs
