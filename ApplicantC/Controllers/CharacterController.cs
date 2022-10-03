@@ -77,9 +77,8 @@ relacionadas
                        {
                            Id = m.Id,
                            Image = m.Image,
-                           Title = m.Title,
-                           CreatedDate = m.CreatedDate,
-                           Rating = m.Rating
+                           Title = m.Title, 
+                           CreatedDate = m.CreatedDate
                        };
             cd.Movies = list.ToArray();
             return cd;
@@ -134,10 +133,11 @@ relacionadas
         }
 
         [HttpDelete]
-        public IActionResult Delete(Models.Character character)
+        [Route("{id}")]
+        public IActionResult Delete(int id)
         {
             ChallengeContext db = new ChallengeContext();
-            Data.Character c = db.Characters.Find(character.Id);
+            Data.Character c = db.Characters.Find(id);
             if (c != null)
             {
                 db.Characters.Remove(c);

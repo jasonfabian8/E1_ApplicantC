@@ -1,9 +1,14 @@
 ﻿using ApplicantC.Data;
 using ApplicantC.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using static System.Net.Mime.MediaTypeNames;
+using System.Xml.Linq;
+using System.Data.Entity.ModelConfiguration.Configuration;
 
 namespace ApplicantC.Controllers
 {
@@ -13,7 +18,7 @@ namespace ApplicantC.Controllers
     {
 
         [HttpGet]
-        public IEnumerable<Models.Movie> GetList(string title, int genre)
+        public IEnumerable<Models.Movie> GetList(string title, int genre, Order? order)
         {
             /*    Deberá mostrar solamente los campos imagen, título y fecha de creación.
 El endpoint deberá ser:
@@ -36,8 +41,10 @@ El término de búsqueda, filtro u ordenación se deberán especificar como par�
             var list = from b in db.Movies
                        where ((title == null) || (b.Title.Contains(title)))
                             && ((genre == 0) || (b.Genre.Id == genre))
-                       select new Models.Movie { Id = b.Id, Title = b.Title, Image = b.Image, CreatedDate = b.CreatedDate };
-            return list;
+                       select new Models.Movie { Id = b.Id, Title = b.Title, Image = b.Image, 
+                          CreatedDate = b.CreatedDate 
+                       };
+            return (order==null) ? list : (order==Order.ASC) ? list.OrderBy(x=>x.CreatedDate) : list.OrderByDescending(x => x.CreatedDate);
 
         }
 
@@ -77,13 +84,16 @@ relacionadas
         public IActionResult Post(Models.MovieDetail movie)
         {
             ChallengeContext db = new ChallengeContext();
+            Data.Genre g = db.Genres.Find(movie.GenreId);
+            if (g == null) return BadRequest();
             Data.Movie m = new Data.Movie
             {
                 Title = movie.Title,
                 Image = movie.Image,
                 CreatedDate= movie.CreatedDate,
                 Rating = movie.Rating,
-                GenreId = movie.GenreId
+                //GenreId = movie.GenreId
+                Genre = db.Genres.Find(movie.GenreId)
             };
             if (movie.Characters != null)
                 foreach (Models.Character c in movie.Characters)
@@ -123,10 +133,11 @@ relacionadas
         }
 
         [HttpDelete]
-        public IActionResult Delete(Models.Movie movie)
+        [Route("{id}")]
+        public IActionResult Delete(int id)
         {
             ChallengeContext db = new ChallengeContext();
-            Data.Movie m = db.Movies.Find(movie.Id);
+            Data.Movie m = db.Movies.Find(id);
             if (m != null)
             {
                 db.Movies.Remove(m);
