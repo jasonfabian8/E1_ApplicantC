@@ -9,11 +9,14 @@ using System.Linq;
 using static System.Net.Mime.MediaTypeNames;
 using System.Xml.Linq;
 using System.Data.Entity.ModelConfiguration.Configuration;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace ApplicantC.Controllers
 {
     [ApiController]
     [Route("movies")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class MovieController : ControllerBase
     {
 
